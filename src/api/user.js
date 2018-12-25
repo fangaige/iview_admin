@@ -1,12 +1,14 @@
 import axios from '@/libs/api.request'
 
-export const login = ({ userName, password }) => {
+export const login = ({ userName, password, captcha, catKey }) => {
   const data = {
-    userName,
-    password
+    username: userName,
+    password,
+    captcha,
+    catKey
   }
   return axios.request({
-    url: 'login',
+    url: '/admin/login',
     data,
     method: 'post'
   })
@@ -14,17 +16,21 @@ export const login = ({ userName, password }) => {
 
 export const getUserInfo = (token) => {
   return axios.request({
-    url: 'get_info',
-    params: {
-      token
-    },
+    url: 'admin/permission',
+    method: 'get'
+  })
+}
+// 获取验证码图片
+export const captcha = () => {
+  return axios.request({
+    url: 'admin/captcha',
     method: 'get'
   })
 }
 
 export const logout = (token) => {
   return axios.request({
-    url: 'logout',
+    url: 'admin/logout',
     method: 'post'
   })
 }

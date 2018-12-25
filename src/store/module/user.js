@@ -7,7 +7,8 @@ import {
   hasRead,
   removeReaded,
   restoreTrash,
-  getUnreadCount
+  getUnreadCount,
+  captcha
 } from '@/api/user'
 import { setToken, getToken } from '@/libs/util'
 
@@ -23,7 +24,9 @@ export default {
     messageUnreadList: [],
     messageReadedList: [],
     messageTrashList: [],
-    messageContentStore: {}
+    messageContentStore: {},
+    catKey: '',
+    captchaImg: ''
   },
   mutations: {
     setAvator (state, avatorPath) {
@@ -74,16 +77,31 @@ export default {
   },
   actions: {
     // 登录
-    handleLogin ({ commit }, {userName, password}) {
+    handleLogin ({ commit, state }, {userName, password, captcha}) {
       userName = userName.trim()
       return new Promise((resolve, reject) => {
         login({
           userName,
-          password
+          password,
+          captcha,
+          catKey: state.catKey
         }).then(res => {
-          const data = res.data
+          const data = res.data.data
           commit('setToken', data.token)
-          resolve()
+          resolve(res)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    // 获取验证码图片和key
+    captcha ({state}) {
+      return new Promise((resolve, reject) => {
+        captcha().then((res) => {
+          // 把验证码的img和key存在vuex中；登录的时候用；
+          state.catKey = res.data.data.url.key
+          state.captchaImg = res.data.data.url.img
+          resolve(res)
         }).catch(err => {
           reject(err)
         })
@@ -94,7 +112,7 @@ export default {
       return new Promise((resolve, reject) => {
         logout(state.token).then(() => {
           commit('setToken', '')
-          commit('setAccess', [])
+          // commit('setAccess', [])
           resolve()
         }).catch(err => {
           reject(err)
@@ -106,15 +124,17 @@ export default {
       })
     },
     // 获取用户相关信息
-    getUserInfo ({ state, commit }) {
+    getUserInfo ({ rootState, commit }) {
       return new Promise((resolve, reject) => {
         try {
-          getUserInfo(state.token).then(res => {
+          getUserInfo().then(res => {
             const data = res.data
-            commit('setAvator', data.avator)
-            commit('setUserName', data.name)
-            commit('setUserId', data.user_id)
-            commit('setAccess', data.access)
+            rootState.app.accessRouters = res.data.data
+            console.log('huoqu', res)
+            // commit('setAvator', data.avator) // 用户的头像
+            // commit('setUserName', data.name)
+            // commit('setUserId', data.user_id)
+            // commit('setAccess', data.access)
             commit('setHasGetInfo', true)
             resolve(data)
           }).catch(err => {

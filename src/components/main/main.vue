@@ -86,6 +86,7 @@ export default {
       return ['ParentView', ...this.tagNavList.length ? this.tagNavList.filter(item => !(item.meta && item.meta.notCache)).map(item => item.name) : []]
     },
     menuList () {
+      console.log('menulist',this.$store.getters.menuList)
       return this.$store.getters.menuList
     },
     local () {

@@ -39,8 +39,12 @@ export default {
         this.$router.push({
           name: 'login'
         })
-      })
-    },
+      }).catch(err => {
+        this.$router.push({
+          name: 'login'
+        })
+        }
+      )},
     message () {
       this.$router.push({
         name: 'message_page'
