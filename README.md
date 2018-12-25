@@ -121,9 +121,6 @@ npm run build
 ## 效果展示
 
 
-### 💖💖 If you find this project helpful, maybe you can buy me a coffee. 💖💖
-![image](https://github.com/iview/iview-admin/raw/dev/github-gif/code.png)
-
 
 ## License
 [MIT](http://opensource.org/licenses/MIT)
