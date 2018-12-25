@@ -111,18 +111,7 @@ npm run build
     └── tests  测试相关
 ```
 
-## Links
-
-- [TalkingData](https://github.com/TalkingData)
-- [iView](https://github.com/iview/iview)
-- [Vue](https://github.com/vuejs/vue)
-- [Webpack](https://github.com/webpack/webpack)
-
-## 效果展示
 
 
 
-## License
-[MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2016-present, iView
