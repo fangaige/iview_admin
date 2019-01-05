@@ -39,5 +39,8 @@ export default {
   cropper_page: '图片裁剪',
   message_page: '消息中心',
   tree_table_page: '树状表格',
-  org_tree_page: '组织结构树'
+  org_tree_page: '组织结构树',
+  settings: '设置',
+  files: '文件资源'
+
 }

@@ -7,7 +7,7 @@ const { title, cookieExpires, useI18n } = config
 export const TOKEN_KEY = 'token'
 
 export const setToken = (token) => {
-  Cookies.set(TOKEN_KEY, token, {expires: cookieExpires || 1})
+  Cookies.set(TOKEN_KEY, token, { expires: cookieExpires || 1 })
 }
 
 export const getToken = () => {
@@ -60,7 +60,7 @@ export const getBreadCrumbList = (route, homeRoute) => {
   let res = routeMetched.filter(item => {
     return item.meta === undefined || !item.meta.hideInBread
   }).map(item => {
-    let meta = {...item.meta}
+    let meta = { ...item.meta }
     if (meta.title && typeof meta.title === 'function') {
       meta.__titleIsFunction__ = true
       meta.title = meta.title(route)
@@ -75,12 +75,12 @@ export const getBreadCrumbList = (route, homeRoute) => {
   res = res.filter(item => {
     return !item.meta.hideInMenu
   })
-  return [{...homeItem, to: homeRoute.path}, ...res]
+  return [{ ...homeItem, to: homeRoute.path }, ...res]
 }
 
 export const getRouteTitleHandled = (route) => {
-  let router = {...route}
-  let meta = {...route.meta}
+  let router = { ...route }
+  let meta = { ...route.meta }
   let title = ''
   if (meta.title) {
     if (typeof meta.title === 'function') {
@@ -396,4 +396,21 @@ export const setTitle = (routeItem, vm) => {
   const pageTitle = showTitle(handledRoute, vm)
   const resTitle = pageTitle ? `${title} - ${pageTitle}` : title
   window.document.title = resTitle
+}
+
+// table组件和page组件配合使用；--fangaige
+// 初始化表格第一页；数据有几条
+export const tableListInit = (data, size) => {
+  // 初始化显示，小于每页显示条数，全显，大于每页显示条数，取前每页条数显示
+  if (data.length < size) {
+    return data
+  } else {
+    return data.slice(0, size)
+  }
+}
+// 当页数改变时候
+export const pageoOnChange = (index, size, dataAax) => {
+  var _start = (index - 1) * size
+  var _end = index * size
+  return dataAax.slice(_start, _end)
 }

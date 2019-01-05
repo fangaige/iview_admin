@@ -51,6 +51,35 @@ export default [
     ]
   },
   {
+    path: '/settings',
+    name: 'settings',
+    meta: {
+      icon: 'md-settings',
+      title: '设置'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'files',
+        name: 'files',
+        meta: {
+          icon: 'md-folder',
+          title: '文件资源'
+        },
+        component: () => import('@/view/files/files.vue')
+      },
+      {
+        path: 'files',
+        name: 'files',
+        meta: {
+          icon: 'md-trending-up',
+          title: '文件资源'
+        },
+        component: () => import('@/view/components/count-to/count-to.vue')
+      }
+    ]
+  },
+  {
     path: '',
     name: 'doc',
     meta: {
