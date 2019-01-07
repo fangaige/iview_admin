@@ -80,6 +80,35 @@ export default [
     ]
   },
   {
+    path: '/product',
+    name: 'product',
+    meta: {
+      icon: 'md-briefcase',
+      title: '产品'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'all_products',
+        name: 'all_products',
+        meta: {
+          icon: 'md-briefcase',
+          title: '所有产品'
+        },
+        component: () => import('@/view/product/all_products.vue')
+      },
+      {
+        path: 'files',
+        name: 'files',
+        meta: {
+          icon: 'md-trending-up',
+          title: '文件资源'
+        },
+        component: () => import('@/view/files/files.vue')
+      }
+    ]
+  },
+  {
     path: '',
     name: 'doc',
     meta: {

@@ -41,6 +41,7 @@ export default {
   tree_table_page: '树状表格',
   org_tree_page: '组织结构树',
   settings: '设置',
-  files: '文件资源'
-
+  files: '文件资源',
+  product: '产品',
+  all_products: '所有产品'
 }
