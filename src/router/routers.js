@@ -95,7 +95,7 @@ export default [
           icon: 'md-briefcase',
           title: '所有产品'
         },
-        component: () => import('@/view/product/all_products.vue')
+        component: () => import('@/view/product/all-products/all_products.vue')
       },
       {
         path: 'files',
@@ -105,6 +105,15 @@ export default [
           title: '文件资源'
         },
         component: () => import('@/view/files/files.vue')
+      },
+      {
+        path: 'add_products',
+        name: 'add_products',
+        meta: {
+          title: '所有产品',
+          hideInMenu: true
+        },
+        component: () => import('@/view/product/all-products/add_products.vue')
       }
     ]
   },

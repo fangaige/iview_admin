@@ -24,9 +24,9 @@
             <tags-nav :value="$route" @input="handleClick" :list="tagNavList" @on-close="handleCloseTag"/>
           </div>
           <Content class="content-wrapper">
-            <keep-alive :include="cacheList">
+            <!-- <keep-alive :include="cacheList"> -->
               <router-view/>
-            </keep-alive>
+            <!-- </keep-alive> -->
             <ABackTop :height="100" :bottom="80" :right="50" container=".content-wrapper"></ABackTop>
           </Content>
         </Layout>
@@ -86,7 +86,7 @@ export default {
       return ['ParentView', ...this.tagNavList.length ? this.tagNavList.filter(item => !(item.meta && item.meta.notCache)).map(item => item.name) : []]
     },
     menuList () {
-      console.log('menulist',this.$store.getters.menuList)
+      console.log('menulist', this.$store.getters.menuList)
       return this.$store.getters.menuList
     },
     local () {
@@ -172,11 +172,11 @@ export default {
     // 设置初始语言
     this.setLocal(this.$i18n.locale)
     // 如果当前打开页面不在标签栏中，跳到homeName页
-    if (!this.tagNavList.find(item => item.name === this.$route.name)) {
-      this.$router.push({
-        name: this.$config.homeName
-      })
-    }
+    // if (!this.tagNavList.find(item => item.name === this.$route.name)) {
+    //   this.$router.push({
+    //     name: this.$config.homeName
+    //   })
+    // }
     // 获取未读消息条数
     this.getUnreadMessageCount()
   }

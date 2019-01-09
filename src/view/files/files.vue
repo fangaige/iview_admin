@@ -70,7 +70,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.show(params.index)
+                    this.show(params.row.path)
                   }
                 }
               }, params.row.name)
@@ -103,7 +103,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.show(params.index)
+                    this.show(params.row.path)
                   }
                 }
               }, 'View'),
@@ -114,7 +114,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.remove(params.index)
+                    this.remove(params.row.id)
                   }
                 }
               }, 'Delete')
@@ -143,7 +143,7 @@ export default {
     show (index) {
       this.$Message.destroy()
       this.$Message.info({
-        content: `<img src="${this.data6[index].path}">`,
+        content: `<img src="${index}">`,
         closable: true,
         duration: 10
       })
@@ -172,7 +172,7 @@ export default {
         url: '/admin/resource/del_file_by_id',
         method: 'delete',
         params: {
-          id: this.data6[index].id
+          id: index
         }
       }).then(res => {
         console.log('remove', res)
