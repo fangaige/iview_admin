@@ -110,8 +110,9 @@ export default [
         path: 'add_products',
         name: 'add_products',
         meta: {
-          title: '所有产品',
-          hideInMenu: true
+          title: '添加产品',
+          hideInMenu: true,
+          hideTab: true
         },
         component: () => import('@/view/product/all-products/add_products.vue')
       }
