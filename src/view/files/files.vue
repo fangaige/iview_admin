@@ -8,7 +8,7 @@
                 <Button @click="handleSearch" class="search-btn" type="primary"><Icon type="search"/>&nbsp;&nbsp;搜索</Button>
             </div>
             <div class="loaddiv">
-                <Upload :show-upload-list="false" multiple :format="uploadFormat" :on-format-error="onFormatError" :on-success="uploadSuccess" :on-error="onError" :before-upload="beforeUpload" :data="uploadData" :headers="uploadheaders"  :action="actionurl">
+                <Upload ref="upload" :show-upload-list="false" multiple :format="uploadFormat" :on-format-error="onFormatError" :on-success="uploadSuccess" :on-error="onError" :before-upload="beforeUpload" :data="uploadData" :headers="uploadheaders"  :action="actionurl">
                 <Button icon="ios-cloud-upload-outline">Upload files</Button>
                 </Upload>
             </div>
@@ -27,6 +27,7 @@ export default {
     return {
       // 选中的行id
       selectedArr: [],
+      selectedObj: [],
       // upload额外数据
       uploadData: {
         site_id: 1
@@ -135,6 +136,7 @@ export default {
     // 选中行发生变化时传入说有选中行的数据
     onSelectionChange (selection) {
       this.selectedArr = []
+      this.selectedObj = selection
       selection.forEach(item => {
         this.selectedArr.push(item.id)
       })
@@ -228,7 +230,7 @@ export default {
       this.tableListReq(this.nowPage, this.pageSize)
     },
     uploadSuccess (response, file, fileList) {
-      console.log(response, file, fileList)
+      console.log(response, file, fileList, this.$refs.upload.fileList)
       if (response.code === 10) {
         this.$Notice.success({
           title: '文件上传成功',
