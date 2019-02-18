@@ -16,7 +16,8 @@
           <Table ref="selection" border :columns="columns7" :data="data6" max-height="650" @on-selection-change="onSelectionChange"></Table>
           <div class="page"><Page :total="dataCount" show-sizer @on-change="onChange" @on-page-size-change="onPageSizeChange"/></div>
                 <Modal :z-index="10002" width="auto" title="View Image" v-model="modal2">
-                    <img :src="imgPath" v-if="modal2" style="width: 90%">
+                    <img :src="imgPath" v-if="showImgIf">
+                    <video controls="" v-if="showVideoIf" preload="auto" :src="imgPath" data-setup="{}" autoplay="autoplay"><source :src="imgPath" type="video/mp4"></video>
                 </Modal>
        </Card>
    </div>
@@ -28,6 +29,8 @@ import config from '@/config'
 export default {
   data () {
     return {
+      showImgIf: false,
+      showVideoIf: false,
       modal2: false,
       imgPath: '',
       // 选中的行id
@@ -109,7 +112,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.show(params.row.path)
+                    this.show(params.row)
                   }
                 }
               }, 'View'),
@@ -151,9 +154,16 @@ export default {
       })
       console.log('selected', this.selectedArr)
     },
-    show (index) {
-      this.imgPath = index
+    show (data) {
+      this.imgPath = data.path
       this.modal2 = true
+      if (data.type === 'mp4') {
+        this.showVideoIf = true
+        this.showImgIf = false
+      } else {
+        this.showVideoIf = false
+        this.showImgIf = true
+      }
       // this.$Message.destroy()
       // this.$Message.info({
       //   content: `<img src="${index}">`,
