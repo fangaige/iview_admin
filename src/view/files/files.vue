@@ -13,8 +13,11 @@
                 </Upload>
             </div>
          </div>
-          <Table border :columns="columns7" :data="data6" max-height="650" @on-selection-change="onSelectionChange"></Table>
+          <Table ref="selection" border :columns="columns7" :data="data6" max-height="650" @on-selection-change="onSelectionChange"></Table>
           <div class="page"><Page :total="dataCount" show-sizer @on-change="onChange" @on-page-size-change="onPageSizeChange"/></div>
+                <Modal :z-index="10002" width="auto" title="View Image" v-model="modal2">
+                    <img :src="imgPath" v-if="modal2" style="width: 90%">
+                </Modal>
        </Card>
    </div>
 </template>
@@ -25,6 +28,8 @@ import config from '@/config'
 export default {
   data () {
     return {
+      modal2: false,
+      imgPath: '',
       // 选中的行id
       selectedArr: [],
       selectedObj: [],
@@ -133,6 +138,10 @@ export default {
     }
   },
   methods: {
+    // 取消所有选中
+    cancelSelect () {
+      this.$refs.selection.selectAll(false)
+    },
     // 选中行发生变化时传入说有选中行的数据
     onSelectionChange (selection) {
       this.selectedArr = []
@@ -143,12 +152,14 @@ export default {
       console.log('selected', this.selectedArr)
     },
     show (index) {
-      this.$Message.destroy()
-      this.$Message.info({
-        content: `<img src="${index}">`,
-        closable: true,
-        duration: 10
-      })
+      this.imgPath = index
+      this.modal2 = true
+      // this.$Message.destroy()
+      // this.$Message.info({
+      //   content: `<img src="${index}">`,
+      //   closable: true,
+      //   duration: 10
+      // })
       //  this.$Modal.confirm({
       //      render: (h) => {
       //          return h('img',{

@@ -45,10 +45,11 @@
                             </div>
                       </div>
                 </Card>
-                <Modal title="View Image" v-model="modal2">
+                <Modal :z-index="10002" title="View Image" v-model="modal2">
                     <img :src="imgPath" v-if="modal2" style="width: 90%">
                 </Modal>
                 <Modal
+                :z-index="10002"
                  ok-text="确认选择"
                  width="1000px"
                  v-model="modal1"
@@ -252,6 +253,7 @@
 
                 </Card>
                     <Modal
+                    :z-index="10002"
                     ok-text="确认选择"
                     v-model="modal3"
                     title="请选择标签"
