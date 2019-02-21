@@ -2,7 +2,7 @@
     <div>
         <Row>
             <i-col span="10" offset="4">
-                <Button type="default"><Icon type="ios-arrow-back" />所有产品</Button>
+                <Button @click="handleAdd" type="default"><Icon type="ios-arrow-back" />所有产品</Button>
             </i-col>
         </Row>
         <Row class="mt-20">
@@ -11,7 +11,7 @@
             </i-col>
             <i-col span="8">
                 <ButtonGroup class="fr">
-                    <Button>取消</Button>
+                    <Button @click="handleAdd">取消</Button>
                     <Button type="primary" @click="save">保存</Button>
                 </ButtonGroup>
             </i-col>
@@ -271,7 +271,6 @@
 </template>
 <script>
 import Editor from '_c/editor'
-import config from '@/config'
 import axios from '@/libs/api.request'
 import files from '@/view/files/files.vue'
 export default {
@@ -384,6 +383,19 @@ export default {
     }
   },
   methods: {
+    handleAdd () {
+      this.$Modal.confirm({
+        title: 'Title',
+        content: '<p>还未保存确认退出？</p>',
+        onOk: () => {
+          this.$router.push({
+            name: 'all_products'
+          })
+        },
+        onCancel: () => {
+        }
+      })
+    },
     addObj (id, val) {
       console.log('niubinibi')
       const addobj1 = {}
@@ -624,11 +636,13 @@ export default {
           this.formInline.product_tags = tagArr
           if (this.formInline.product_tags.length < 1) { this.$Message.error('至少添加一个标签!'); return }
           // 处理集合ids增加两个字段
+          let datasCollections = []
           this.formInline.product_collections.forEach((item, index) => {
             const obj = { collection_id: '', remark: '', sort: 0 }
             obj.collection_id = item
-            this.formInline.product_collections[index] = obj
+            datasCollections.push(obj)
           })
+          this.formInline.product_collections = datasCollections
           if (this.formInline.product_collections.length < 1) { this.$Message.error('至少选择一个集合!'); return }
           // 产品描述不能为空验证；
           if (!this.formInline.description) { this.$Message.error('请填写产品描述!'); return }
@@ -656,6 +670,11 @@ export default {
             data: sendData
           }).then(res => {
             this.$Message.success(res.data.msg)
+            if (res.data.code === 10) {
+              this.$router.push({
+                name: 'all_products'
+              })
+            }
           })
           // console.log(this.formInline)
         } else {

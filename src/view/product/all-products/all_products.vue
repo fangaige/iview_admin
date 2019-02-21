@@ -98,7 +98,18 @@ export default {
                     this.remove(params.row.id)
                   }
                 }
-              }, '删除')
+              }, '删除'),
+              h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                on: {
+                  click: () => {
+                    this.editProducts(params.row)
+                  }
+                }
+              }, '编辑产品')
             ])
           }
         }
@@ -120,6 +131,12 @@ export default {
         },
         onCancel: () => {
         }
+      })
+    },
+    editProducts (data) {
+      this.$router.push({
+        name: 'edit_products',
+        params: { productsId: data.id }
       })
     },
     removeAjax (id) {

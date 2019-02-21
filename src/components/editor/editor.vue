@@ -65,9 +65,9 @@ export default {
     }
   },
   methods: {
-    // setHtml (val) {
-    //   this.editor.txt.html(val)
-    // }
+    setHtml (val) {
+      this.editor.txt.html(val)
+    },
     selectResouce () {
       this.modal1 = true
       this.$refs.files.cancelSelect() // 取消复选框勾选内容
@@ -82,7 +82,7 @@ export default {
         }
         this.editor.txt.append(addHtml)
       })
-      console.log('this.$refs.files.selectedObj', this.$refs.files.selectedObj)
+      this.editor.change()
     }
   },
   mounted () {
