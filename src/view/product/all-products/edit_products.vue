@@ -7,7 +7,7 @@
         </Row>
         <Row class="mt-20">
             <i-col span="10" offset="4">
-                <div class="addproduct">添加产品</div>
+                <div class="addproduct">编辑产品{{this.$router.params}}</div>
             </i-col>
             <i-col span="8">
                 <ButtonGroup class="fr">
@@ -33,7 +33,7 @@
                         </i-col>
                     </Row>
                     <div>描述</div>
-                    <editor ref="editor" @on-change="handleChange"/>
+                    <editor ref="editor" @on-change="handleChange"></editor>
                 </Card>
                 <Card class="mt-10">
                       <div><strong>图片</strong> <Button class="fr" @click="selectImg" type="default">选择图片</Button></div>
@@ -136,8 +136,142 @@
 
                 </Card>
                 <Card class="mt-10">
-                    <div><strong>属性</strong></div>
-                    <template v-for="(item, index) in formInline.attribute_options">
+                    <div><strong>属性</strong><Button @click="showModal4" class="fr" size="small" type="primary">添加属性</Button></div>
+                    <span v-for="(item, key, index) in attrval" :key="'attributeval'+index" >
+                      <Tag v-for="(item, ind) in item.options" :key="'attrspan'+ind" :color="setColor(index)">{{item.attribute_value}}&nbsp;&nbsp;{{item.attribute_english_value}}</Tag >
+                    </span>
+                    <div><strong>变种</strong></div>
+                    <Table border :columns="columns6" :data="data5"></Table>
+                    <row><Button @click="addvariant" class="fr" size="small" type="primary">添加变种</Button></row>
+                </Card>
+                    <Modal
+                    width="1000px"
+                    v-model="modal5"
+                    title="修改变种">
+                      <div slot="footer">
+                        <Button type="text" size="large" @click="modal5=false">取消</Button>
+                        <Button type="primary" size="large" @click="variantModalOk">保存</Button>
+                      </div>
+                    <Card class="mt-10">
+                      <Form ref="variantformVild" :model="editVariantData" :rules="variantruleInline">
+                      <template v-for="(item, index) in editVariantData.attribute_list">
+                      <div :key="'attribute_variant'+index">
+                      <div><strong>{{item.attribute_list_has_attribute.name}}</strong></div>
+                    <Row>
+                        <i-col span="12">
+                            <FormItem label="属性值：" :prop="'attribute_list.' + index + '.attribute_value'" :rules="{required: true, message: '请填写中文属性值', trigger: 'blur'}">
+                                 <Input v-model="item.attribute_value" placeholder="请填写属性值" style="width: 60%"/>
+                            </FormItem>
+                        </i-col>
+                        <i-col span="12">
+                            <FormItem label="英文属性值：" :prop="'attribute_list.' + index + '.attribute_english_value'" :rules="{required: true, message: '请填写英文属性值', trigger: 'blur'}">
+                                 <Input v-model="item.attribute_english_value" placeholder="请填写英文属性值" style="width: 60%"/>
+                            </FormItem>
+                        </i-col>
+                    </Row>
+                    </div>
+                    </template>
+                       <Row>
+                        <i-col span="12"><div>价格</div>
+                            <FormItem prop="price">
+                               <i-input v-model="editVariantData.price" placeholder="请填写产品价格" style="width: 90%">
+                               <span slot="prepend">$</span>
+                               </i-input>
+                            </FormItem>
+                        </i-col>
+                           <i-col span="12"><div>SKU</div>
+                               <FormItem prop="sku">
+                                  <i-input v-model="editVariantData.sku" placeholder="请填写SKU码" style="width: 90%">
+                                  </i-input>
+                               </FormItem>
+                           </i-col>
+                           <i-col span="12"><div>条形码（ISBN，UPC，GTIN等）</div>
+                               <FormItem prop="bar_code">
+                                  <i-input v-model="editVariantData.bar_code" placeholder="请填写条形码" style="width: 90%">
+                                  </i-input>
+                               </FormItem>
+                           </i-col>
+                           <i-col span="12"><div>库存数量</div>
+                               <FormItem prop="num">
+                                  <i-input v-model="editVariantData.num" placeholder="请填写产品成本价" style="width: 90%">
+                                  </i-input>
+                               </FormItem>
+                           </i-col>
+                       </Row>
+                       </Form>
+                    </Card>
+                    </Modal>
+                    <Modal
+                    width="1000px"
+                    v-model="modal6"
+                    title="添加变种">
+                      <div slot="footer">
+                        <Button type="text" size="large" @click="modal6=false">取消</Button>
+                        <Button type="primary" size="large" @click="addvariantModalOk">保存</Button>
+                      </div>
+                    <Card class="mt-10">
+                      <Form ref="addvariantformVild" :model="addVariantData" :rules="variantruleInline">
+                      <template v-for="(item, index) in addVariantData.attribute_list">
+                      <div :key="'attribute_variant'+index">
+                      <div><strong>{{item.attribute_list_has_attribute.name}}</strong></div>
+                    <Row>
+                        <i-col span="12">
+                            <FormItem label="属性值：" :prop="'attribute_list.' + index + '.attribute_value'" :rules="{required: true, message: '请填写中文属性值', trigger: 'blur'}">
+                                 <Input v-model="item.attribute_value" placeholder="请填写属性值" style="width: 60%"/>
+                            </FormItem>
+                        </i-col>
+                        <i-col span="12">
+                            <FormItem label="英文属性值：" :prop="'attribute_list.' + index + '.attribute_english_value'" :rules="{required: true, message: '请填写英文属性值', trigger: 'blur'}">
+                                 <Input v-model="item.attribute_english_value" placeholder="请填写英文属性值" style="width: 60%"/>
+                            </FormItem>
+                        </i-col>
+                    </Row>
+                    </div>
+                    </template>
+                       <Row>
+                        <i-col span="12"><div>价格</div>
+                            <FormItem prop="price">
+                               <i-input v-model="addVariantData.price" placeholder="请填写产品价格" style="width: 90%">
+                               <span slot="prepend">$</span>
+                               </i-input>
+                            </FormItem>
+                        </i-col>
+                           <i-col span="12"><div>SKU</div>
+                               <FormItem prop="sku">
+                                  <i-input v-model="addVariantData.sku" placeholder="请填写SKU码" style="width: 90%">
+                                  </i-input>
+                               </FormItem>
+                           </i-col>
+                           <i-col span="12"><div>条形码（ISBN，UPC，GTIN等）</div>
+                               <FormItem prop="bar_code">
+                                  <i-input v-model="addVariantData.bar_code" placeholder="请填写条形码" style="width: 90%">
+                                  </i-input>
+                               </FormItem>
+                           </i-col>
+                           <i-col span="12"><div>库存数量</div>
+                               <FormItem prop="num">
+                                  <i-input v-model="addVariantData.num" placeholder="请填写产品成本价" style="width: 90%">
+                                  </i-input>
+                               </FormItem>
+                           </i-col>
+                       </Row>
+                       </Form>
+                    </Card>
+                    </Modal>
+                <Modal
+                    width="1000px"
+                    ok-text="保存"
+                    v-model="modal4"
+                    title="添加属性">
+                       <div slot="footer">
+                         <Button type="text" size="large" @click="modal4=false">取消</Button>
+                         <Button type="primary" size="large" @click="attrModalOk">保存</Button>
+                       </div>
+                    <Tag type="dot" v-for="(item, key, index) in attrval" :color="setColor(index)" :key="'attributeval'+index" >
+                      {{item.name}}&nbsp;&nbsp;{{item.english_name}}&nbsp;&nbsp;
+                      <Tag v-for="(item, ind) in item.options" :key="'attrspan'+ind" :color="setColor(index)">{{item.attribute_value}}&nbsp;&nbsp;{{item.attribute_english_value}}</Tag >
+                    </Tag>
+                    <template v-for="(item, index) in attribute_options">
                     <Card class="mt-5" :key="'attribute_options'+index">
                     <Row>
                         <i-col span="12">
@@ -169,38 +303,11 @@
                     </template>
                     <Row class="mt-10">
                         <i-col span="12">
-                            <Button v-if="formInline.attribute_options.length <4" type="dashed" @click="addAttrSelect" icon="md-add">给产品添加属性</Button>
+                            <Button v-if="attribute_options.length <4" type="dashed" @click="addAttrSelect" icon="md-add">给产品添加属性</Button>
                         </i-col>
                     </Row>
-                    <div class="mt-10"><strong>产品种类：</strong></div>
-                    <Row class="mt-10">
-                        <i-col span="6">种类</i-col><i-col span="3">价格</i-col><i-col span="6">SKU</i-col><i-col span="6">条码</i-col><i-col span="3">库存</i-col>
-                    </Row>
-                    <Row class="mt-10" v-for="(item, index) in formInline.product_attributes" :key="'product_attributes'+index">
-                        <i-col span="6"><span v-for="(item, index) in item.attributes" :key="'attributes'+index">{{item.value}}&nbsp;&nbsp;</span></i-col>
-                        <i-col span="3">
-                            <FormItem :prop="'price' + index ">
-                                 <Input  v-model="item.price" placeholder="请填写价格" size="small" style="width: 90%"/>
-                            </FormItem></i-col>
-                        <i-col span="6">
-                            <FormItem :prop="'SKU' + index ">
-                                 <Input  v-model="item.sku" placeholder="请填写SKU" size="small" style="width: 90%"/>
-                            </FormItem>
-                        </i-col>
-                        <i-col span="6">
-                            <FormItem :prop="'bar_code' + index ">
-                                 <Input  v-model="item.bar_code" placeholder="请填写条形码" size="small" style="width: 90%"/>
-                            </FormItem>
-                        </i-col>
-                        <i-col span="3">
-                            <FormItem :prop="'num' + index ">
-                                 <Input  v-model="item.num" placeholder="请填写库存" size="small" style="width: 90%"/>
-                            </FormItem>
-                        </i-col>
-                    </Row>
-                </Card>
+                </Modal>
             </i-col>
-
             <i-col span="5" offset="1">
                 <Card class="mt-10">
                    <div><strong>标签</strong>
@@ -298,11 +405,16 @@ export default {
   },
   data () {
     return {
-      site_id: 1,
-      // datasCollections: [],
+      site_id: null,
+      supplierId: '',
+      addVariantData: {},
+      editVariantData: {},
+      attribute_options: [],
+      attrval: [],
       attrSelectList: [],
-      // colleSelectList: [],
+      colleSelectList: [],
       selectList: [],
+      // datasCollections: [],
       formInline: {
         name: '',
         english_name: '',
@@ -325,9 +437,21 @@ export default {
         supplier_phone: '',
         collection_id: '0', // 暂时没用
         // product_collections: [],
-        description: '',
-        attribute_options: [{ attribute: 1, values: [{ attribute_value: '', attribute_english_value: '' }] }],
-        product_attributes: []
+        description: ''
+      },
+      variantruleInline: {
+        price: [
+          { required: true, message: '请填写产品价格', trigger: 'blur' }
+        ],
+        num: [
+          { required: true, message: '请填写产品库存', trigger: 'blur' }
+        ],
+        sku: [
+          { required: true, message: '请选择产品sku', trigger: 'blur' }
+        ],
+        bar_code: [
+          { required: true, message: '请选择产品条形码', trigger: 'blur' }
+        ]
       },
       ruleInline: {
         name: [
@@ -364,9 +488,63 @@ export default {
       modal1: false,
       modal2: false,
       modal3: false,
+      modal4: false,
+      modal5: false,
+      modal6: false,
       imgPath: '',
       tagValue: '',
       fileSelectedArr: [],
+      columns6: [
+        {
+          title: '种类',
+          key: 'name',
+          render: (h, params) => {
+            let arr = []
+            params.row.attribute_list.forEach(item => {
+              arr.push(
+                h('span', item.attribute_value))
+            })
+            return h('div', arr)
+          }
+        },
+        {
+          title: '价格',
+          key: 'price'
+        },
+        {
+          title: 'SKU',
+          key: 'sku'
+        },
+        {
+          title: '条码',
+          key: 'bar_code'
+        },
+        {
+          title: '库存',
+          key: 'num'
+        },
+        {
+          title: 'Action',
+          key: 'action',
+          width: 150,
+          align: 'center',
+          render: (h, params) => {
+            return h('div', [
+              h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                on: {
+                  click: () => {
+                    this.editVariant(params.row)
+                  }
+                }
+              }, '编辑')
+            ])
+          }
+        }
+      ],
       columns7: [
         {
           type: 'selection',
@@ -400,11 +578,126 @@ export default {
         }
       ],
       data6: [],
+      data5: [],
       seleTagList: [],
       tagList: []
     }
   },
   methods: {
+    addvariantModalOk () {
+      this.$refs['addvariantformVild'].validate((valid) => {
+        if (valid) {
+          let datas = {}
+          datas.product_id = this.addVariantData.product_id
+          datas.price = this.addVariantData.price
+          datas.sku = this.addVariantData.sku
+          datas.bar_code = this.addVariantData.bar_code
+          datas.num = this.addVariantData.num
+          let obj = {}
+          this.addVariantData.attribute_list.forEach(item => {
+            let objs = {}
+            objs.attribute_value = item.attribute_value
+            objs.attribute_english_value = item.attribute_english_value
+            obj[item.attribute_list_has_attribute.id] = objs
+          })
+          datas.attribute_list = JSON.stringify(obj)
+          axios.request({
+            url: '/admin/product/variant/add',
+            method: 'post',
+            data: datas
+          }).then(res => {
+            this.$Message.success(res.data.msg)
+            this.modal6 = false
+            this.defaultReq()
+          })
+        }
+      })
+    },
+    addvariant () {
+      this.addVariantData = JSON.parse(JSON.stringify(this.data5[0]))
+      this.addVariantData.price = ''
+      this.addVariantData.sku = ''
+      this.addVariantData.bar_code = ''
+      this.addVariantData.num = ''
+      this.addVariantData.attribute_list.forEach(item => {
+        item.attribute_value = ''
+        item.attribute_english_value = ''
+      })
+      this.modal6 = true
+    },
+    variantModalOk () {
+      this.$refs['variantformVild'].validate((valid) => {
+        if (valid) {
+          let datas = {}
+          datas.id = this.editVariantData.id
+          datas.price = this.editVariantData.price
+          datas.sku = this.editVariantData.sku
+          datas.bar_code = this.editVariantData.bar_code
+          datas.num = this.editVariantData.num
+          let obj = {}
+          this.editVariantData.attribute_list.forEach(item => {
+            let objs = {}
+            objs.attribute_value = item.attribute_value
+            objs.attribute_english_value = item.attribute_english_value
+            obj[item.attribute_list_has_attribute.id] = objs
+          })
+          datas.attribute_list = JSON.stringify(obj)
+          axios.request({
+            url: '/admin/product/variant/edit',
+            method: 'put',
+            data: datas
+          }).then(res => {
+            this.$Message.success(res.data.msg)
+            this.modal5 = false
+            this.defaultReq()
+          })
+        }
+      })
+    },
+    editVariant (datas) {
+      console.log('editVariant', datas)
+      this.editVariantData = JSON.parse(JSON.stringify(datas))
+      this.editVariantData.num = JSON.parse(JSON.stringify(datas.num.toString()))
+      this.modal5 = true
+    },
+    attrModalOk () {
+      let falg = false // 判断是否有为空项
+      this.attribute_options.forEach(item => {
+        if (item.values.some(item => { return !item.attribute_value }) || item.values.some(item => { return !item.attribute_english_value })) {
+          falg = true
+        }
+      })
+      if (falg) {
+        this.$Message.error('属性值请填写完整！')
+      } else {
+        console.log('attribute_options', this.attribute_options)
+        axios.request({
+          url: '/admin/product/option/add',
+          method: 'post',
+          data: {
+            product_id: this.$route.params.productsId,
+            attribute_options: JSON.stringify(this.attribute_options)
+          }
+        }).then(res => {
+          this.modal4 = false
+          this.$Message.success(res.data.msg)
+          this.defaultReq()
+        })
+      }
+    },
+    setColor (index) {
+      if (index === 0) {
+        return 'primary'
+      } else if (index === 1) {
+        return 'success'
+      } else if (index === 2) {
+        return 'purple'
+      } else if (index === 3) {
+        return 'warning'
+      } else if (index === 4) {
+        return 'error'
+      }
+    },
     handleAdd () {
       this.$Modal.confirm({
         title: 'Title',
@@ -493,38 +786,33 @@ export default {
       console.log(attrArr)
     },
     addAttrValue (index) {
-      this.formInline.attribute_options[index].values.push({ attribute_value: '', attribute_english_value: '' })
-      console.log(index)
+      this.attribute_options[index].values.push({ attribute_value: '', attribute_english_value: '' })
     },
     removeAttVal (index, inde) {
-      if (this.formInline.attribute_options[index].values.length === 1) {
+      if (this.attribute_options[index].values.length === 1) {
         this.removeAttrSelect(index)
       } else {
-        this.formInline.attribute_options[index].values.splice(inde, 1)
-        if (this.formInline.attribute_options[index].values.every(item => !item.attribute_value)) {
+        this.attribute_options[index].values.splice(inde, 1)
+        if (this.attribute_options[index].values.every(item => !item.attribute_value)) {
           this.removeAttrSelect(index)// 如果remove过后的数组中value每个都是空那就删了这个select
-        } else {
-          this.addproduct('iloveyou')// 随便输入字符串更新笛卡尔积
         }
       }
     },
     removeAttrSelect (index) {
-      this.formInline.attribute_options.splice(index, 1)
-      this.addproduct('iloveyou')// 随便输入字符串更新笛卡尔积
+      this.attribute_options.splice(index, 1)
+      // this.addproduct('iloveyou')// 随便输入字符串更新笛卡尔积
     },
     // 添加属性
     addAttrSelect () {
-      this.formInline.attribute_options.push({ attribute: 1, values: [{ attribute_value: '', attribute_english_value: '' }] })
+      this.attribute_options.push({ attribute: 1, values: [{ attribute_value: '', attribute_english_value: '' }] })
     },
-    // 集合下拉框
+    // 下拉框
     attrSelectListReq () {
       axios.request({
         url: '/admin/attribute/all',
         method: 'get'
       }).then(res => {
-        console.log('获取selectlist成功', res)
         this.attrSelectList = res.data.data.data
-        // this.selectList.unshift({ id: '', name: '全部' })
       })
     },
     // 分类下拉框
@@ -544,11 +832,59 @@ export default {
     //     url: '/admin/collection/index',
     //     method: 'get'
     //   }).then(res => {
-    //     console.log('获取集合selectlist成功', res)
     //     this.colleSelectList = res.data.data.data
     //     // this.selectList.unshift({ id: '', name: '全部' })
     //   })
     // },
+    // 返回所有选项默认值
+    defaultReq () {
+      console.log(this.$route.params.productsId)
+
+      axios.request({
+        url: '/admin/product/info',
+        method: 'get',
+        params: {
+          id: this.$route.params.productsId
+        }
+      }).then(res => {
+        console.log('获取初始化数据成功', res)
+        const defDatas = res.data.data.data
+        this.site_id = defDatas.site_id
+        this.formInline.name = defDatas.name
+        this.formInline.english_name = defDatas.english_name
+        this.$refs.editor.setHtml(defDatas.description)
+        this.fileSelectedArr = defDatas.resources
+        this.formInline.price = defDatas.price
+        this.formInline.original_price = defDatas.original_price
+        this.formInline.cost_price = defDatas.cost_price
+        this.formInline.sku = defDatas.sku
+        this.formInline.bar_code = defDatas.bar_code
+        this.formInline.num = defDatas.num.toString()
+        this.formInline.is_reduce_invenory = defDatas.is_reduce_invenory.toString()
+        this.formInline.is_physical_product = defDatas.is_physical_product.toString()
+        this.formInline.weight = defDatas.weight
+        this.formInline.type = defDatas.type.toString()
+        this.formInline.status = defDatas.status.toString()
+        this.formInline.supplier_url = defDatas.suppliers[0].url
+        this.formInline.supplier_contact = defDatas.suppliers[0].contact
+        this.formInline.supplier_remark = defDatas.suppliers[0].remark
+        this.formInline.supplier_price = defDatas.suppliers[0].price
+        this.formInline.supplier_num = defDatas.suppliers[0].num
+        this.formInline.supplier_phone = defDatas.suppliers[0].phone
+        this.supplierId = defDatas.suppliers[0].id
+        // 集合
+        // defDatas.collections.forEach((item, index) => {
+        //   this.formInline.product_collections.push(item.id)
+        // })
+        this.tagList = defDatas.tags
+        this.attrval = defDatas.attribute_options
+        this.data5 = defDatas.product_attributes
+        console.log('this.formInline', this.formInline)
+
+        console.log('获取ref', this.$refs.editor.modal1)
+        // // this.selectList.unshift({ id: '', name: '全部' })
+      })
+    },
     change () {
       console.log(this.formInline)
     },
@@ -562,15 +898,24 @@ export default {
       this.modal2 = true
     },
     handleRemove (id) {
-      let idIndex = null
-      this.fileSelectedArr.forEach((item, index) => {
-        if (item.id === id) { idIndex = index }
+      let datasarr = [id]
+      axios.request({
+        url: '/admin/product/resources/delete',
+        method: 'delete',
+        data: {
+          id: this.$route.params.productsId,
+          product_resource_ids: JSON.stringify(datasarr)
+        }
+      }).then(res => {
+        this.$Message.success(res.data.msg)
+        this.defaultReq()
       })
-      this.fileSelectedArr.splice(idIndex, 1)
-      console.log('handleRemove', this.fileSelectedArr)
     },
     selectImg () {
       this.modal1 = true
+    },
+    showModal4 () {
+      this.modal4 = true
     },
     addAttrModal () {
       this.modal3 = true
@@ -620,7 +965,25 @@ export default {
           this.fileSelectedArr.push(element)
         }
       })
-      console.log('fileSelectedArr', this.fileSelectedArr)
+      let fileSelectedArrResource = []
+      this.fileSelectedArr.forEach((item, index) => {
+        const obj = { resource_id: '', is_index: '', sort: 0 }
+        obj.resource_id = item.id
+        index === 0 ? obj.is_index = 1 : obj.is_index = 0
+        obj.sort = index + 1
+        fileSelectedArrResource.push(obj)
+      })
+      axios.request({
+        url: '/admin/product/resources/edit',
+        method: 'put',
+        data: {
+          id: this.$route.params.productsId,
+          product_resources: JSON.stringify(fileSelectedArrResource)
+        }
+      }).then(res => {
+        this.$Message.success(res.data.msg)
+        this.tagListReq()
+      })
     },
     onSelectionChange (selection) {
       console.log(selection)
@@ -633,72 +996,71 @@ export default {
     //   console.log('selected', this.selectedArr)
     },
     tagModalOk () {
+      let datas = []
       this.seleTagList.forEach(element => {
         if (!this.tagList.some(item => item.id === element.id)) {
-          this.tagList.push(element)
+          datas.push(element.id)
         }
       })
-      console.log('tagList', this.tagList)
+      axios.request({
+        url: '/admin/product/tag/edit',
+        method: 'put',
+        data: {
+          product_id: this.$route.params.productsId,
+          product_tags: JSON.stringify(datas)
+        }
+      }).then(res => {
+        this.$Message.success(res.data.msg)
+        this.defaultReq()
+      })
     },
     tagClose (e, id) {
-      console.log(id)
-      this.tagList.forEach((item, index) => {
-        if (id === item.id) { this.tagList.splice(index, 1) }
+      let datasarr = [id]
+      axios.request({
+        url: '/admin/product/tag/delete',
+        method: 'delete',
+        params: {
+          product_id: this.$route.params.productsId,
+          tag_ids: JSON.stringify(datasarr)
+        }
+      }).then(res => {
+        this.$Message.success(res.data.msg)
+        this.defaultReq()
       })
     },
     save () {
       this.$refs['formVild'].validate((valid) => {
         if (valid) {
-          this.formInline.site_id = this.site_id
-          // 处理标签请求内容
-          let tagArr = []
-          this.tagList.forEach(element => {
-            tagArr.push(element.id)
-          })
-          this.formInline.product_tags = tagArr
-          if (this.formInline.product_tags.length < 1) { this.$Message.error('至少添加一个标签!'); return }
-          // 处理集合ids增加两个字段
-          // this.datasCollections = []
-          // this.formInline.product_collections.forEach((item, index) => {
-          //   const obj = { collection_id: '', remark: '', sort: 0 }
-          //   obj.collection_id = item
-          //   this.datasCollections.push(obj)
-          // })
-          // if (this.datasCollections.length < 1) { this.$Message.error('至少选择一个集合!'); return }
+          this.formInline.id = this.$route.params.productsId
           // 产品描述不能为空验证；
           if (!this.formInline.description) { this.$Message.error('请填写产品描述!'); return }
-          // 处理产品资源；产品图片；
-          let fileSelectedArrResource = []
-          this.fileSelectedArr.forEach((item, index) => {
-            const obj = { resource_id: '', is_index: '', sort: 0 }
-            obj.resource_id = item.id
-            index === 0 ? obj.is_index = 1 : obj.is_index = 0
-            obj.sort = index + 1
-            fileSelectedArrResource.push(obj)
-          })
-          this.formInline.product_resources = fileSelectedArrResource
           // 这几个字段转成json attribute_options product_attributes product_resources product_tags product_collections
           let sendData = {}
           sendData = JSON.parse(JSON.stringify(this.formInline)) // 深拷贝
-          sendData.attribute_options = JSON.stringify(this.formInline.attribute_options)
-          sendData.product_attributes = JSON.stringify(this.formInline.product_attributes)
-          sendData.product_resources = JSON.stringify(this.formInline.product_resources)
-          sendData.product_tags = JSON.stringify(this.formInline.product_tags)
           // sendData.product_collections = JSON.stringify(this.datasCollections)
           console.log(sendData, this.formInline)
           axios.request({
-            url: '/admin/product/add',
-            method: 'post',
+            url: '/admin/product/edit',
+            method: 'put',
             data: sendData
           }).then(res => {
             this.$Message.success(res.data.msg)
-            if (res.data.code === 10) {
-              this.$router.push({
-                name: 'all_products'
-              })
-            }
           })
-          // console.log(this.formInline)
+          let arr = {}
+          arr.supplier_id = this.supplierId
+          arr.supplier_url = sendData.supplier_url
+          arr.supplier_contact = sendData.supplier_contact
+          arr.supplier_phone = sendData.supplier_phone
+          arr.supplier_price = sendData.supplier_price
+          arr.supplier_num = sendData.supplier_num
+          arr.supplier_remark = sendData.supplier_remark
+          axios.request({
+            url: '/admin/supplier/edit',
+            method: 'put',
+            data: arr
+          }).then(res => {
+            this.$Message.success(res.data.msg)
+          })
         } else {
           this.$Message.error('您有必填项未填!')
         }
@@ -707,8 +1069,10 @@ export default {
   },
   mounted () {
     this.selectListReq()
-    // this.colleSelectListReq()
     this.attrSelectListReq()
+  },
+  created () {
+    this.defaultReq()
   }
 }
 </script>

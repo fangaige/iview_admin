@@ -67,6 +67,7 @@ export default {
   methods: {
     setHtml (val) {
       this.editor.txt.html(val)
+      this.editor.change()
     },
     selectResouce () {
       this.modal1 = true
