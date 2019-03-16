@@ -5,12 +5,30 @@
             <div class="searchdiv">
                 <Button @click="batchRemove" type="error">批量删除</Button>
                 <Input  clearable placeholder="输入关键字搜索" class="search-input" v-model="searchValue"/>
+                      <Select v-model="site_id" placement="bottom" placeholder="选择站点" style="width:200px; margin-left:2px">
+                        <Option value="">所有站点</Option>
+                        <Option v-for="item in siteList" :value="item.id.toString()" :key="item.id + 'site'">{{ item.name }}</Option>
+                      </Select>
                 <Button @click="handleSearch" class="search-btn" type="primary"><Icon type="search"/>&nbsp;&nbsp;搜索</Button>
             </div>
             <div class="loaddiv">
-                <Upload ref="upload" :show-upload-list="false" multiple :format="uploadFormat" :on-format-error="onFormatError" :on-success="uploadSuccess" :on-error="onError" :before-upload="beforeUpload" :data="uploadData" :headers="uploadheaders"  :action="actionurl">
-                <Button icon="ios-cloud-upload-outline">Upload files</Button>
-                </Upload>
+              <Button  @click="handleUpLoad" icon="ios-cloud-upload-outline">Upload files</Button>
+                <Modal
+                    :z-index="10002"
+                    v-model="modal1"
+                    title="上传资源">
+                    <Form ref="formVild" :model="formInline" :rules="ruleInline" inline>
+                      <FormItem prop="uploadSite_id">
+                      <Select v-model="formInline.uploadSite_id" placement="bottom" placeholder="选择站点" style="width:200px; margin-left:2px">
+                        <Option v-for="item in siteList" :value="item.id.toString()" :key="item.id + 'upsite'">{{ item.name }}</Option>
+                      </Select>
+                      </FormItem>
+                    </Form>
+                      <Upload ref="upload" :show-upload-list="false" multiple :format="uploadFormat" :on-format-error="onFormatError" :on-success="uploadSuccess" :on-error="onError" :before-upload="beforeUpload" :data="uploadData" :headers="uploadheaders"  :action="actionurl">
+                      <Button icon="ios-cloud-upload-outline" @click="beforeUpload">Upload files</Button>
+                      </Upload>
+                </Modal>
+
             </div>
          </div>
           <Table ref="selection" border :columns="columns7" :data="data6" max-height="650" @on-selection-change="onSelectionChange"></Table>
@@ -29,6 +47,17 @@ import config from '@/config'
 export default {
   data () {
     return {
+      modal1: false,
+      siteList: [],
+      formInline: {
+        uploadSite_id: ''
+      },
+      ruleInline: {
+        uploadSite_id: [
+          { required: true, message: '请选择资源所属的站点', trigger: 'change' }
+        ]
+      },
+      site_id: '',
       showImgIf: false,
       showVideoIf: false,
       modal2: false,
@@ -141,6 +170,9 @@ export default {
     }
   },
   methods: {
+    handleUpLoad () {
+      this.modal1 = true
+    },
     // 取消所有选中
     cancelSelect () {
       this.$refs.selection.selectAll(false)
@@ -199,7 +231,7 @@ export default {
         }
       }).then(res => {
         console.log('remove', res)
-        this.tableListReq(this.nowPage, this.pageSize)
+        this.tableListReq(this.nowPage, this.pageSize, this.searchValue, this.site_id)
         res.data.code === 10 ? this.$Message.success('删除成功') : this.$Message.success(res.data.msg)
       }).catch(err => {
         console.log(err)
@@ -230,7 +262,7 @@ export default {
         }
       }).then(res => {
         console.log('remove', res)
-        this.tableListReq(this.nowPage, this.pageSize)
+        this.tableListReq(this.nowPage, this.pageSize, this.searchValue, this.site_id)
         res.data.code === 10 ? this.$Message.success('删除成功') : this.$Message.success(res.data.msg)
       }).catch(err => {
         console.log(err)
@@ -239,26 +271,27 @@ export default {
     },
     handleSearch () {
       this.nowPage = 1
-      this.tableListReq(this.nowPage, this.pageSize, this.searchValue)
+      this.tableListReq(this.nowPage, this.pageSize, this.searchValue, this.site_id)
     },
     onChange (page) {
       this.nowPage = page
-      this.tableListReq(this.nowPage, this.pageSize)
+      this.tableListReq(this.nowPage, this.pageSize, this.searchValue, this.site_id)
     },
     onPageSizeChange (sizepage) {
       this.pageSize = sizepage
       this.nowPage = 1
-      this.tableListReq(this.nowPage, this.pageSize)
+      this.tableListReq(this.nowPage, this.pageSize, this.searchValue, this.site_id)
     },
     uploadSuccess (response, file, fileList) {
       console.log(response, file, fileList, this.$refs.upload.fileList)
+      this.modal1 = false
       if (response.code === 10) {
         this.$Notice.success({
           title: '文件上传成功',
           desc: `${file.name}上传成功`
         })
         this.nowPage = 1 // 回到第一页；
-        this.tableListReq(this.nowPage, this.pageSize)
+        this.tableListReq(this.nowPage, this.pageSize, this.searchValue, this.site_id)
       } else {
         this.$Notice.error({
           title: '文件上传失败',
@@ -267,9 +300,12 @@ export default {
       }
     },
     beforeUpload (e) {
-      console.log('beforeUpload', e)
-      //  this.uploadsubmit(e);
-      //  return false;
+      this.$refs['formVild'].validate((valid) => {
+        if (!valid) {
+          this.$Message.error('请选择资源所属的站点')
+        }
+      })
+      if (!this.formInline.uploadSite_id) { return false }
     },
     onError (response, file, fileList) {
       this.$Notice.error({
@@ -280,7 +316,7 @@ export default {
     onFormatError (file) {
       this.$Notice.warning({ title: '文件格式错误', desc: '请选择正确文件格式：jpg,jpeg,png,mp4,gif,xls,xlsx' })
     },
-    tableListReq (nowPage, pageSize, name = null, cate_id = null, site_id = null) {
+    tableListReq (nowPage, pageSize, name, site_id) {
       this.selectedArr = [] // 多选行id清空
       axios.request({
         url: 'admin/resource/get_file_list',
@@ -288,9 +324,8 @@ export default {
         params: {
           page: nowPage,
           limit: pageSize,
-          cate_id,
-          site_id,
-          name
+          site_id: site_id || null,
+          name: name || null
         }
       }).then(res => {
         console.log('getlist', res)
@@ -300,11 +335,21 @@ export default {
         console.log(err)
         console.log('getlist错误')
       })
+    },
+    siteListReq () {
+      axios.request({
+        url: '/admin/site/index',
+        method: 'get',
+        params: { simple: '1', page: '1' }
+      }).then(res => {
+        this.siteList = res.data.data.data
+      })
     }
   },
   created () {
     //    this.data6 = tableListInit(this.dataAax,this.pageSize);
     //    this.dataCount= this.dataAax.length;
+    this.siteListReq()
     this.tableListReq(this.nowPage, this.pageSize)
   }
 

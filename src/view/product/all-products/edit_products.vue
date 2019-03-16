@@ -310,6 +310,14 @@
             </i-col>
             <i-col span="5" offset="1">
                 <Card class="mt-10">
+                   <div><strong>站点</strong></div>
+                      <FormItem prop="site_id">
+                      <Select v-model="site_id" disabled placement="bottom" placeholder="选择站点" style="width:200px; margin-left:2px">
+                        <Option v-for="item in siteList" :value="item.id.toString()" :key="item.id + 'site'">{{ item.name }}</Option>
+                      </Select>
+                      </FormItem>
+                </Card>
+                <Card class="mt-10">
                    <div><strong>标签</strong>
                    <Button type="dashed" @click="addAttrModal" icon="md-add" class="fr">添加标签</Button>
                    </div>
@@ -406,6 +414,7 @@ export default {
   data () {
     return {
       site_id: null,
+      siteList: [],
       supplierId: '',
       addVariantData: {},
       editVariantData: {},
@@ -826,6 +835,15 @@ export default {
         // this.selectList.unshift({ id: '', name: '全部' })
       })
     },
+    siteListReq () {
+      axios.request({
+        url: '/admin/site/index',
+        method: 'get',
+        params: { simple: '1', page: '1' }
+      }).then(res => {
+        this.siteList = res.data.data.data
+      })
+    },
     // 集合下拉框
     // colleSelectListReq () {
     //   axios.request({
@@ -849,7 +867,7 @@ export default {
       }).then(res => {
         console.log('获取初始化数据成功', res)
         const defDatas = res.data.data.data
-        this.site_id = defDatas.site_id
+        this.site_id = defDatas.site_id.toString()
         this.formInline.name = defDatas.name
         this.formInline.english_name = defDatas.english_name
         this.$refs.editor.setHtml(defDatas.description)
@@ -1072,6 +1090,7 @@ export default {
     this.attrSelectListReq()
   },
   created () {
+    this.siteListReq()
     this.defaultReq()
   }
 }

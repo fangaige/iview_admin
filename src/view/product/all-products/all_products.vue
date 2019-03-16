@@ -9,6 +9,10 @@
                    <Radio label="1">显示启用</Radio>
                    <Radio label="0">显示未启用</Radio>
                 </RadioGroup>
+                <label>按站点搜索：</label>
+                <Select @on-change="siteChange" v-model="site_id" placement="bottom" placeholder="选择站点搜索" style="width:200px; margin-left:2px">
+                  <Option v-for="item in siteList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+                </Select>
                 <Input  clearable placeholder="输入产品名搜索" class="search-input" v-model="searchName"/>
                 <Select v-model="selectValue" placement="bottom" placeholder="选择产品类型搜索" style="width:200px; margin-left:2px">
                   <Option v-for="item in selectList" :value="item.id" :key="item.id">{{ item.name }}</Option>
@@ -34,8 +38,9 @@ export default {
       selectValue: '',
       radioValue: '',
       // 站点
-      site_id: 1,
+      site_id: '',
       selectList: [],
+      siteList: [],
       // 初始化信息总条数
       dataCount: 0,
       // 每页显示多少条
@@ -206,11 +211,25 @@ export default {
         this.selectList = res.data.data.data
         this.selectList.unshift({ id: '', name: '全部' })
       })
+    },
+    siteListReq () {
+      axios.request({
+        url: '/admin/site/index',
+        method: 'get',
+        params: { simple: '1', page: '1' }
+      }).then(res => {
+        this.siteList = res.data.data.data
+        this.site_id = this.$store.state.app.siteId ? this.$store.state.app.siteId : this.siteList[0].id
+        this.tableListReq()
+      })
+    },
+    siteChange (datas) {
+      this.$store.state.app.siteId = datas.id
     }
   },
   created () {
-    this.tableListReq()
     this.selectListReq()
+    this.siteListReq()
   }
 }
 </script>

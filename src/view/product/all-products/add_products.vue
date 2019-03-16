@@ -203,6 +203,14 @@
 
             <i-col span="5" offset="1">
                 <Card class="mt-10">
+                   <div><strong>站点</strong></div>
+                      <FormItem prop="site_id">
+                      <Select v-model="formInline.site_id" placement="bottom" placeholder="选择站点" style="width:200px; margin-left:2px">
+                        <Option v-for="item in siteList" :value="item.id.toString()" :key="item.id + 'site'">{{ item.name }}</Option>
+                      </Select>
+                      </FormItem>
+                </Card>
+                <Card class="mt-10">
                    <div><strong>标签</strong>
                    <Button type="dashed" @click="addAttrModal" icon="md-add" class="fr">添加标签</Button>
                    </div>
@@ -298,7 +306,7 @@ export default {
   },
   data () {
     return {
-      site_id: 1,
+      siteList: [],
       // datasCollections: [],
       attrSelectList: [],
       // colleSelectList: [],
@@ -359,6 +367,9 @@ export default {
         ],
         bar_code: [
           { required: true, message: '请选择产品条形码', trigger: 'blur' }
+        ],
+        site_id: [
+          { required: true, message: '请选择产品站点', trigger: 'change' }
         ]
       },
       modal1: false,
@@ -581,7 +592,7 @@ export default {
         url: '/admin/tag/index',
         method: 'get',
         params: {
-          id: this.site_id
+          id: this.formInline.site_id
         }
       }).then(res => {
         console.log('获取taglist成功', res)
@@ -593,7 +604,7 @@ export default {
         url: '/admin/tag/add',
         method: 'post',
         data: {
-          site_id: this.site_id,
+          site_id: this.formInline.site_id,
           name: this.tagValue
         }
       }).then(res => {
@@ -646,10 +657,18 @@ export default {
         if (id === item.id) { this.tagList.splice(index, 1) }
       })
     },
+    siteListReq () {
+      axios.request({
+        url: '/admin/site/index',
+        method: 'get',
+        params: { simple: '1', page: '1' }
+      }).then(res => {
+        this.siteList = res.data.data.data
+      })
+    },
     save () {
       this.$refs['formVild'].validate((valid) => {
         if (valid) {
-          this.formInline.site_id = this.site_id
           // 处理标签请求内容
           let tagArr = []
           this.tagList.forEach(element => {
@@ -709,6 +728,7 @@ export default {
     this.selectListReq()
     // this.colleSelectListReq()
     this.attrSelectListReq()
+    this.siteListReq()
   }
 }
 </script>
