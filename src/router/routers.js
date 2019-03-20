@@ -19,6 +19,14 @@ import parentView from '@/components/parent-view'
 
 export default [
   {
+    path: '/theme1',
+    name: 'theme1',
+    meta: {
+      title: '主题一'
+    },
+    component: () => import('@/view/theme1/theme1.vue')
+  },
+  {
     path: '/login',
     name: 'login',
     meta: {
@@ -69,13 +77,22 @@ export default [
         component: () => import('@/view/files/files.vue')
       },
       {
-        path: 'files',
-        name: 'files',
+        path: 'all_site',
+        name: 'all_site',
         meta: {
           icon: 'md-trending-up',
-          title: '文件资源'
+          title: '站点列表'
         },
-        component: () => import('@/view/components/count-to/count-to.vue')
+        component: () => import('@/view/site/all_site.vue')
+      },
+      {
+        path: 'add_site',
+        name: 'add_site',
+        meta: {
+          icon: 'md-trending-up',
+          title: '新增站点'
+        },
+        component: () => import('@/view/site/add_site.vue')
       }
     ]
   },
@@ -115,6 +132,16 @@ export default [
           hideTab: true
         },
         component: () => import('@/view/product/all-products/add_products.vue')
+      },
+      {
+        path: 'edit_products',
+        name: 'edit_products',
+        meta: {
+          title: '编辑产品',
+          hideInMenu: true,
+          hideTab: true
+        },
+        component: () => import('@/view/product/all-products/edit_products.vue')
       }
     ]
   },
