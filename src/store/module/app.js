@@ -14,7 +14,7 @@ import {
 import beforeClose from '@/router/before-close'
 import { saveErrorLogger } from '@/api/data'
 import router from '@/router'
-import routers from '@/router/routers'
+// import { routes } from '@/router/routers'
 import config from '@/config'
 const { homeName } = config
 
@@ -34,7 +34,8 @@ export default {
     local: localRead('local'),
     errorList: [],
     hasReadErrorPage: false,
-    accessRouters: []
+    accessRouters: [],
+    siteId: ''
   },
   getters: {
     menuList: (state, getters, rootState) => getMenuByRouter(state.accessRouters, rootState.user.access),

@@ -17,7 +17,7 @@ import parentView from '@/components/parent-view'
  * }
  */
 
-export default [
+export const routerMap = [
   {
     path: '/theme1',
     name: 'theme1',
@@ -27,34 +27,31 @@ export default [
     component: () => import('@/view/theme1/theme1.vue')
   },
   {
-    path: '/login',
-    name: 'login',
+    path: '/author',
+    name: 'author',
     meta: {
-      title: 'Login - 登录',
-      hideInMenu: true
+      icon: 'md-settings',
+      title: '权限设置'
     },
-    component: () => import('@/view/login/login.vue')
-  },
-  {
-    path: '/',
-    name: '_home',
-    redirect: '/home',
     component: Main,
-    meta: {
-      hideInMenu: true,
-      notCache: true
-    },
     children: [
       {
-        path: '/home',
-        name: 'home',
+        path: 'author_set',
+        name: 'author_set',
         meta: {
-          hideInMenu: true,
-          title: '首页',
-          notCache: true,
-          icon: 'md-home'
+          icon: 'md-folder',
+          title: '权限设置'
         },
-        component: () => import('@/view/single-page/home')
+        component: () => import('@/view/author/author_set.vue')
+      },
+      {
+        path: 'author_admin',
+        name: 'author_admin',
+        meta: {
+          icon: 'md-folder',
+          title: '管理员列表'
+        },
+        component: () => import('@/view/author/author_set.vue')
       }
     ]
   },
@@ -115,15 +112,6 @@ export default [
         component: () => import('@/view/product/all-products/all_products.vue')
       },
       {
-        path: 'files',
-        name: 'files',
-        meta: {
-          icon: 'md-trending-up',
-          title: '文件资源'
-        },
-        component: () => import('@/view/files/files.vue')
-      },
-      {
         path: 'add_products',
         name: 'add_products',
         meta: {
@@ -142,6 +130,41 @@ export default [
           hideTab: true
         },
         component: () => import('@/view/product/all-products/edit_products.vue')
+      }
+    ]
+  }
+]
+export const routes = [
+
+  {
+    path: '/login',
+    name: 'login',
+    meta: {
+      title: 'Login - 登录',
+      hideInMenu: true
+    },
+    component: () => import('@/view/login/login.vue')
+  },
+  {
+    path: '/',
+    name: '_home',
+    redirect: '/home',
+    component: Main,
+    meta: {
+      hideInMenu: true,
+      notCache: true
+    },
+    children: [
+      {
+        path: '/home',
+        name: 'home',
+        meta: {
+          hideInMenu: true,
+          title: '首页',
+          notCache: true,
+          icon: 'md-home'
+        },
+        component: () => import('@/view/single-page/home')
       }
     ]
   },

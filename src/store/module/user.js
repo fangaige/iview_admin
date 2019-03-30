@@ -11,6 +11,25 @@ import {
   captcha
 } from '@/api/user'
 import { setToken, getToken } from '@/libs/util'
+import router from '@/router/index'
+import { routes, routerMap } from '@/router/routers'
+
+const getAccesRouterList = (routerMap, rules) => {
+  return routerMap.filter(item => {
+    if (rules[item.name]) {
+      if (item.children) { item.children = getAccesRouterList(item.children, rules) }
+      return true
+    } else return false
+  })
+}
+const concatRoutes = (rules) => {
+  let routerList = []
+  routerList = getAccesRouterList(routerMap, rules)
+  const accessRouters = routerList.concat(routes)
+  // store.state.app.accessRouters = accessRouters
+  console.log('routes', routes, 'routerList', routerList, 'accessRouters', accessRouters)
+  return routerList
+}
 
 export default {
   state: {
@@ -77,7 +96,7 @@ export default {
   },
   actions: {
     // 登录
-    handleLogin ({ commit, state }, {userName, password, captcha}) {
+    handleLogin ({ commit, state }, { userName, password, captcha }) {
       userName = userName.trim()
       return new Promise((resolve, reject) => {
         login({
@@ -95,7 +114,7 @@ export default {
       })
     },
     // 获取验证码图片和key
-    captcha ({state}) {
+    captcha ({ state }) {
       return new Promise((resolve, reject) => {
         captcha().then((res) => {
           // 把验证码的img和key存在vuex中；登录的时候用；
@@ -128,15 +147,33 @@ export default {
       return new Promise((resolve, reject) => {
         try {
           getUserInfo().then(res => {
-            const data = res.data
-            rootState.app.accessRouters = res.data.data
+            const rules = {
+              author: true,
+              author_set: true,
+              author_admin: true,
+              theme1: true,
+              settings: true,
+              files: true,
+              all_site: true,
+              add_site: true,
+              product: true,
+              all_products: true,
+              add_products: true,
+              edit_products: true
+            }
+            // rootState.app.accessRouters = res.data.data
             console.log('huoqu', res)
             // commit('setAvator', data.avator) // 用户的头像
             // commit('setUserName', data.name)
             // commit('setUserId', data.user_id)
             // commit('setAccess', data.access)
+            const routerList = concatRoutes(rules)
+            console.log('routerListff', routerList)
+            router.addRoutes(routerList)
+            rootState.app.accessRouters = routerList.concat(routes)
+            console.log('accessRouters', rootState.app.accessRouters)
             commit('setHasGetInfo', true)
-            resolve(data)
+            resolve(res.data)
           }).catch(err => {
             reject(err)
           })
